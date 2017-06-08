@@ -414,6 +414,7 @@ module Mixins
       prometheus_alerts_api_port = params[:prometheus_alerts_api_port].strip if params[:prometheus_alerts_api_port]
       prometheus_alerts_security_protocol = params[:prometheus_alerts_security_protocol].strip if params[:prometheus_alerts_security_protocol]
       prometheus_tls_ca_certs = params[:hawkular_tls_ca_certs].strip if params[:hawkular_tls_ca_certs]
+      prometheus_tls_ca_certs = params[:prometheus_tls_ca_certs].strip if params[:prometheus_tls_ca_certs]
       default_endpoint = {}
       amqp_endpoint = {}
       ceilometer_endpoint = {}
