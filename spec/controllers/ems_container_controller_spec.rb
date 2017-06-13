@@ -150,7 +150,7 @@ describe EmsContainerController do
         "default_userid"             => "",
         "default_password"           => "",
         "provider_region"            => "",
-        "metrics_selection"          => "hawkular_enabled",
+        "monitoring_selection"       => "hawkular",
         "hawkular_security_protocol" => "ssl-without-validation",
         "hawkular_hostname"          => "hawkular_hostname",
         "hawkular_api_port"          => "443",
