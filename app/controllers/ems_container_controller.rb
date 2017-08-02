@@ -91,7 +91,7 @@ class EmsContainerController < ApplicationController
     [nil, e.message]
   end
 
-  def retrieve_monitoring_selection
+  def retrieve_metrics_selection
     endpoint_role = @ems.endpoints.where.not(:role => 'default').pluck(:role)
     unless endpoint_role.nil?
       endpoint_role.first

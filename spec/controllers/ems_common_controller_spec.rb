@@ -123,7 +123,7 @@ describe EmsContainerController do
                                                       :default_security_protocol  => 'ssl-with-validation-custom-ca',
                                                       :default_tls_ca_certs       => '-----BEGIN DUMMY...',
                                                       :default_password           => 'valid-token',
-                                                      :monitoring_selection       => 'hawkular',
+                                                      :metrics_selection          => 'hawkular',
                                                       :hawkular_hostname          => '10.10.10.10',
                                                       :hawkular_api_port          => '8443',
                                                       :hawkular_security_protocol => 'ssl-with-validation',

@@ -300,13 +300,12 @@ module Mixins
       } if controller_name == "ems_infra"
 
       if controller_name == "ems_container"
-<<<<<<< 55537e04231261f498b7e9be8bca48488722ca8d
         render :json => {:name                                => @ems.name,
                          :emstype                             => @ems.emstype,
                          :zone                                => zone,
                          :hostname                            => @ems.hostname,
                          :default_hostname                    => @ems.connection_configurations.default.endpoint.hostname,
-                         :monitoring_selection                => retrieve_monitoring_selection,
+                         :monitoring_selection                => retrieve_metrics_selection,
                          :metrics_selection_default           => @ems.emstype == 'kubernetes' ? 'disabled' : 'enabled',
                          :hawkular_hostname                   => hawkular_hostname,
                          :default_api_port                    => @ems.connection_configurations.default.endpoint.port,
@@ -334,37 +333,6 @@ module Mixins
                          :prometheus_alerts_tls_ca_certs      => prometheus_alerts_tls_ca_certs,
                          :prometheus_alerts_auth_status       => prometheus_alerts_auth_status,
                          :alerts_selection                    => retrieve_alerts_selection}
-=======
-        render :json => {
-          :name                         => @ems.name,
-          :emstype                      => @ems.emstype,
-          :zone                         => zone,
-          :hostname                     => @ems.hostname,
-          :default_hostname             => @ems.connection_configurations.default.endpoint.hostname,
-          :monitoring_selection         => retrieve_monitoring_selection,
-          :metrics_selection_default    => @ems.emstype == 'kubernetes' ? 'disabled' : 'enabled',
-          :hawkular_hostname            => hawkular_hostname,
-          :default_api_port             => @ems.connection_configurations.default.endpoint.port,
-          :hawkular_api_port            => hawkular_api_port,
-          :prometheus_hostname          => prometheus_hostname,
-          :prometheus_api_port          => prometheus_api_port,
-          :prometheus_tls_ca_certs      => prometheus_tls_ca_certs,
-          :prometheus_security_protocol => prometheus_security_protocol,
-          :api_version                  => @ems.api_version ? @ems.api_version : "v2",
-          :default_security_protocol    => default_security_protocol,
-          :hawkular_security_protocol   => hawkular_security_protocol,
-          :default_tls_ca_certs         => default_tls_ca_certs,
-          :hawkular_tls_ca_certs        => hawkular_tls_ca_certs,
-          :provider_region              => @ems.provider_region,
-          :default_userid               => @ems.authentication_userid ? @ems.authentication_userid : "",
-          :service_account              => service_account ? service_account : "",
-          :bearer_token_exists          => @ems.authentication_token(:bearer).nil? ? false : true,
-          :ems_controller               => controller_name,
-          :default_auth_status          => default_auth_status,
-          :prometheus_auth_status       => prometheus_auth_status,
-          :hawkular_auth_status         => hawkular_auth_status
-        }
->>>>>>> moved the drop down to the provider section
       end
 
       if controller_name == "ems_middleware"
@@ -514,15 +482,14 @@ module Mixins
         params[:cred_type] = ems.default_authentication_type if params[:cred_type] == "default"
         default_endpoint = {:role => :default, :hostname => hostname, :port => port}
         default_endpoint.merge!(endpoint_security_options(ems.security_protocol, default_tls_ca_certs))
-        if params[:monitoring_selection] == 'hawkular'
+        if params[:metrics_selection] == 'hawkular'
           if hawkular_hostname.blank?
             default_key = params[:default_password] || ems.authentication_key
             hawkular_hostname = get_hostname_from_routes(ems, default_endpoint, default_key)
           end
           hawkular_endpoint = {:role => :hawkular, :hostname => hawkular_hostname, :port => hawkular_api_port}
           hawkular_endpoint.merge!(endpoint_security_options(hawkular_security_protocol, hawkular_tls_ca_certs))
-        end
-        if params[:monitoring_selection] == 'prometheus'
+        elsif params[:metrics_selection] == 'prometheus'
           prometheus_endpoint = {:role => :prometheus, :hostname => prometheus_hostname, :port => prometheus_api_port}
           prometheus_endpoint.merge!(endpoint_security_options(prometheus_security_protocol, prometheus_tls_ca_certs))
         end

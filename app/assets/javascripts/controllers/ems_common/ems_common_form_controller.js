@@ -17,7 +17,7 @@ ManageIQ.angular.app.controller('emsCommonFormController', ['$http', '$scope', '
       amqp_api_port: '',
       prometheus_hostname: '',
       prometheus_api_port: '',
-      monitoring_selection: '',
+      metrics_selection: '',
       prometheus_tls_ca_certs: '',
       prometheus_auth_status: '',
       prometheus_security_protocol: '',
@@ -116,7 +116,7 @@ ManageIQ.angular.app.controller('emsCommonFormController', ['$http', '$scope', '
       $scope.emsCommonModel.hawkular_hostname               = data.hawkular_hostname;
       $scope.emsCommonModel.prometheus_hostname             = data.prometheus_hostname;
       $scope.emsCommonModel.hawkular_auth_status            = data.hawkular_auth_status;
-      $scope.emsCommonModel.monitoring_selection            = data.monitoring_selection;
+      $scope.emsCommonModel.metrics_selection               = data.metrics_selection;
       $scope.emsCommonModel.metrics_hostname                = data.metrics_hostname;
       $scope.emsCommonModel.project                         = data.project;
 
@@ -228,7 +228,7 @@ ManageIQ.angular.app.controller('emsCommonFormController', ['$http', '$scope', '
       $scope.emsCommonModel.api_version                     = 'v2';
       $scope.emsCommonModel.ems_controller                  = data.ems_controller;
       $scope.emsCommonModel.ems_controller === 'ems_container' ? $scope.emsCommonModel.default_api_port = '8443' : $scope.emsCommonModel.default_api_port = '';
-      $scope.emsCommonModel.monitoring_selection            = data.monitoring_selection;
+      $scope.emsCommonModel.metrics_selection               = data.metrics_selection;
       $scope.emsCommonModel.default_security_protocol       = data.default_security_protocol;
       $scope.emsCommonModel.hawkular_security_protocol      = data.hawkular_security_protocol;
       $scope.emsCommonModel.prometheus_security_protocol    = data.prometheus_security_protocol;
@@ -302,12 +302,12 @@ ManageIQ.angular.app.controller('emsCommonFormController', ['$http', '$scope', '
         ($scope.emsCommonModel.prometheus_alerts_hostname != '' && $scope.emsCommonModel.prometheus_alerts_api_port != '') &&
         ($scope.emsCommonModel.default_password != '' && $scope.angularForm.default_password.$valid)) {
       return true;
-    } else if(($scope.emsCommonModel.monitoring_selection == "hawkular" && $scope.emsCommonModel.ems_controller == "ems_container") &&
+    } else if(($scope.emsCommonModel.metrics_selection == "hawkular" && $scope.emsCommonModel.ems_controller == "ems_container") &&
       ($scope.emsCommonModel.emstype) &&
       ($scope.emsCommonModel.hawkular_hostname != '' && $scope.emsCommonModel.hawkular_api_port) &&
       ($scope.emsCommonModel.default_password != '' && $scope.angularForm.default_password.$valid)) {
       return true;
-    } else if(($scope.emsCommonModel.monitoring_selection == "prometheus" && $scope.emsCommonModel.ems_controller == "ems_container") &&
+    } else if(($scope.emsCommonModel.metrics_selection == "prometheus" && $scope.emsCommonModel.ems_controller == "ems_container") &&
       ($scope.emsCommonModel.emstype) &&
       ($scope.emsCommonModel.prometheus_hostname != '' && $scope.emsCommonModel.prometheus_api_port) &&
       ($scope.emsCommonModel.default_password != '' && $scope.angularForm.default_password.$valid) &&
@@ -400,8 +400,6 @@ ManageIQ.angular.app.controller('emsCommonFormController', ['$http', '$scope', '
   $scope.providerTypeChanged = function() {
     if ($scope.emsCommonModel.ems_controller === 'ems_container') {
       $scope.emsCommonModel.default_api_port = "8443"; // TODO: correct per-type port
-      // Should we revert to emsCommonModel.monitoring_selection  == "disabled" ?
-      // Container types are nearly identical, no point resetting most fields on type change.
       return;
     }
     $scope.emsCommonModel.default_api_port = "";

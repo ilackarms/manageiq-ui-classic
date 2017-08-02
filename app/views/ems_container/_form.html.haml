@@ -40,14 +40,14 @@
                               "readonly" => true,
                               "style"    => "color: black; font-weight: normal;"}
             = @emstype_display
-            
-    .form-group{"ng-class" => "{'has-error': angularForm.monitoring.$invalid}"}
-      %label.col-md-2.control-label{"for" => "prov_monitoring"}
-        = _("Monitoring")
+
+    .form-group{"ng-class" => "{'has-error': angularForm.metrics.$invalid}"}
+      %label.col-md-2.control-label{"for" => "prov_metrics"}
+        = _("Metrics")
       .col-md-8
-        = select_tag('monitoring_selection', options_for_select([[_("Disabled"), "disabled"], [_("Hawkular"), "hawkular"],
+        = select_tag('metrics_selection', options_for_select([[_("Disabled"), "disabled"], [_("Hawkular"), "hawkular"],
                      [_("Prometheus"), "prometheus"]]),
-                     "ng-model"                    => "emsCommonModel.monitoring_selection",
+                     "ng-model"                    => "emsCommonModel.metrics_selection",
                      "checkchange"                 => "",
                      "required"                    => "",
                      "selectpicker-for-select-tag" => "")
