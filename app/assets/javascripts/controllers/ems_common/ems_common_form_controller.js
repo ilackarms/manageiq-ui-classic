@@ -54,7 +54,13 @@ ManageIQ.angular.app.controller('emsCommonFormController', ['$http', '$scope', '
       metrics_auth_status: '',
       ssh_keypair_auth_status: '',
       hawkular_auth_status: '',
-      vmware_cloud_api_version: ''
+      vmware_cloud_api_version: '',
+      prometheus_alerts_hostname: '',
+      prometheus_alerts_api_port: '',
+      prometheus_alerts_tls_ca_certs: '',
+      prometheus_alerts_auth_status: '',
+      prometheus_alerts_security_protocol: '',
+      alerts_selection: '',
     };
     $scope.formId = emsCommonFormId;
     $scope.afterGet = false;
@@ -147,6 +153,12 @@ ManageIQ.angular.app.controller('emsCommonFormController', ['$http', '$scope', '
       $scope.emsCommonModel.metrics_auth_status             = data.metrics_auth_status;
       $scope.emsCommonModel.ssh_keypair_auth_status         = data.ssh_keypair_auth_status;
       $scope.emsCommonModel.hawkular_auth_status            = data.hawkular_auth_status;
+      $scope.emsCommonModel.alerts_selection                = data.alerts_selection;
+      $scope.emsCommonModel.prometheus_alerts_hostname      = data.prometheus_alerts_hostname;
+      $scope.emsCommonModel.prometheus_alerts_api_port      = data.prometheus_alerts_api_port !== undefined && data.prometheus_alerts_api_port !== '' ? data.prometheus_alerts_api_port.toString() : '443';
+      $scope.emsCommonModel.prometheus_alerts_auth_status   = data.prometheus_alerts_auth_status;
+      $scope.emsCommonModel.prometheus_alerts_security_protocol = data.prometheus_alerts_security_protocol;
+      $scope.emsCommonModel.prometheus_alerts_tls_ca_certs  = data.prometheus_alerts_tls_ca_certs;
 
       if ($scope.emsCommonModel.default_userid !== '') {
         $scope.emsCommonModel.default_password = miqService.storedPasswordPlaceholder;
@@ -184,6 +196,11 @@ ManageIQ.angular.app.controller('emsCommonFormController', ['$http', '$scope', '
       $scope.emsCommonModel.default_api_port                = '';
       $scope.emsCommonModel.amqp_api_port                   = '5672';
       $scope.emsCommonModel.metrics_selection               = data.metrics_selection;
+      $scope.emsCommonModel.alerts_selection                = data.alerts_selection;
+      $scope.emsCommonModel.prometheus_alerts_api_port      = '443';
+      $scope.emsCommonModel.prometheus_alerts_auth_status   = data.prometheus_alerts_auth_status;
+      $scope.emsCommonModel.prometheus_alerts_security_protocol = data.prometheus_alerts_security_protocol;
+      $scope.emsCommonModel.prometheus_alerts_tls_ca_certs  = data.prometheus_alerts_tls_ca_certs;
       $scope.emsCommonModel.hawkular_api_port               = '443';
       $scope.emsCommonModel.api_version                     = 'v2';
       $scope.emsCommonModel.ems_controller                  = data.ems_controller;
@@ -252,6 +269,11 @@ ManageIQ.angular.app.controller('emsCommonFormController', ['$http', '$scope', '
       ($scope.emsCommonModel.emstype) &&
       ($scope.emsCommonModel.default_hostname != '' && $scope.emsCommonModel.default_api_port) &&
       ($scope.emsCommonModel.default_password != '' && $scope.angularForm.default_password.$valid)) {
+      return true;
+    } else if (($scope.currentTab == "alerts" && $scope.emsCommonModel.ems_controller == "ems_container") &&
+        ($scope.emsCommonModel.emstype) &&
+        ($scope.emsCommonModel.prometheus_alerts_hostname != '' && $scope.emsCommonModel.prometheus_alerts_api_port != '') &&
+        ($scope.emsCommonModel.default_password != '' && $scope.angularForm.default_password.$valid)) {
       return true;
     } else if(($scope.currentTab == "hawkular" && $scope.emsCommonModel.ems_controller == "ems_container") &&
       ($scope.emsCommonModel.emstype) &&
@@ -434,6 +456,9 @@ ManageIQ.angular.app.controller('emsCommonFormController', ['$http', '$scope', '
     if ($scope.emsCommonModel.hawkular_auth_status === true) {
       $scope.postValidationModelRegistry("hawkular");
     }
+    if ($scope.emsCommonModel.prometheus_alerts_auth_status === true) {
+      $scope.postValidationModelRegistry("prometheus_alerts");
+    }
   };
 
   $scope.postValidationModelRegistry = function(prefix) {
@@ -442,7 +467,9 @@ ManageIQ.angular.app.controller('emsCommonFormController', ['$http', '$scope', '
                                     amqp: {},
                                     metrics: {},
                                     ssh_keypair: {},
-                                    hawkular: {}}
+                                    hawkular: {},
+        prometheus_alerts: {}
+      }
     }
     if (prefix === "default") {
       if ($scope.newRecord) {
@@ -509,6 +536,13 @@ ManageIQ.angular.app.controller('emsCommonFormController', ['$http', '$scope', '
         hawkular_api_port:          $scope.emsCommonModel.hawkular_api_port,
         hawkular_security_protocol: $scope.emsCommonModel.hawkular_security_protocol,
         hawkular_tls_ca_certs:      $scope.emsCommonModel.hawkular_tls_ca_certs,
+      }
+    } else if (prefix == "prometheus_alerts") {
+      $scope.postValidationModel['prometheus_alerts'] = {
+        prometheus_alerts_hostname: $scope.emsCommonModel.prometheus_alerts_hostname,
+        prometheus_alerts_api_port: $scope.emsCommonModel.prometheus_alerts_api_port,
+        prometheus_alerts_security_protocol: $scope.emsCommonModel.prometheus_alerts_security_protocol,
+        prometheus_alerts_tls_ca_certs: $scope.emsCommonModel.prometheus_alerts_tls_ca_certs,
       }
     }
   };
