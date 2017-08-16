@@ -135,19 +135,13 @@ module Mixins
       metrics_hostname = ""
       metrics_port = ""
       metrics_database_name = ""
+      metrics_security_protocol = security_protocol_default
+      metrics_tls_ca_certs = ""
       keystone_v3_domain_id = ""
-      hawkular_hostname = ""
-      hawkular_api_port = ""
-      hawkular_security_protocol = security_protocol_default
-      hawkular_tls_ca_certs = ""
       prometheus_alerts_hostname = ""
       prometheus_alerts_api_port = ""
       prometheus_alerts_security_protocol = security_protocol_default
       prometheus_alerts_tls_ca_certs = ""
-      prometheus_hostname = ""
-      prometheus_api_port = ""
-      prometheus_security_protocol = security_protocol_default
-      prometheus_tls_ca_certs = ""
 
       if @ems.connection_configurations.amqp.try(:endpoint)
         amqp_hostname = @ems.connection_configurations.amqp.endpoint.hostname
@@ -180,21 +174,21 @@ module Mixins
       end
 
       if @ems.connection_configurations.hawkular.try(:endpoint)
-        hawkular_hostname = @ems.connection_configurations.hawkular.endpoint.hostname
-        hawkular_api_port = @ems.connection_configurations.hawkular.endpoint.port
-        hawkular_auth_status = @ems.authentication_status_ok?(:hawkular)
-        hawkular_security_protocol = @ems.connection_configurations.hawkular.endpoint.security_protocol
-        hawkular_security_protocol ||= security_protocol_default
-        hawkular_tls_ca_certs = @ems.connection_configurations.hawkular.endpoint.certificate_authority
+        metrics_hostname = @ems.connection_configurations.hawkular.endpoint.hostname
+        metrics_port = @ems.connection_configurations.hawkular.endpoint.port
+        metrics_auth_status = @ems.authentication_status_ok?(:hawkular)
+        metrics_security_protocol = @ems.connection_configurations.hawkular.endpoint.security_protocol
+        metrics_security_protocol ||= security_protocol_default
+        metrics_tls_ca_certs = @ems.connection_configurations.hawkular.endpoint.certificate_authority
       end
 
       if @ems.connection_configurations.prometheus.try(:endpoint)
-        prometheus_hostname = @ems.connection_configurations.prometheus.endpoint.hostname
-        prometheus_api_port = @ems.connection_configurations.prometheus.endpoint.port
-        prometheus_auth_status = @ems.authentication_status_ok?(:prometheus)
-        prometheus_security_protocol = @ems.connection_configurations.prometheus.endpoint.security_protocol
-        prometheus_security_protocol ||= security_protocol_default
-        prometheus_tls_ca_certs = @ems.connection_configurations.prometheus.endpoint.certificate_authority
+        metrics_hostname = @ems.connection_configurations.prometheus.endpoint.hostname
+        metrics_port = @ems.connection_configurations.prometheus.endpoint.port
+        metrics_auth_status = @ems.authentication_status_ok?(:prometheus)
+        metrics_security_protocol = @ems.connection_configurations.prometheus.endpoint.security_protocol
+        metrics_security_protocol ||= security_protocol_default
+        metrics_tls_ca_certs = @ems.connection_configurations.prometheus.endpoint.certificate_authority
       end
 
       if @ems.connection_configurations.prometheus_alerts.try(:endpoint)
@@ -305,28 +299,22 @@ module Mixins
                          :zone                                => zone,
                          :hostname                            => @ems.hostname,
                          :default_hostname                    => @ems.connection_configurations.default.endpoint.hostname,
-                         :monitoring_selection                => retrieve_metrics_selection,
-                         :metrics_selection_default           => @ems.emstype == 'kubernetes' ? 'disabled' : 'enabled',
-                         :hawkular_hostname                   => hawkular_hostname,
                          :default_api_port                    => @ems.connection_configurations.default.endpoint.port,
-                         :prometheus_hostname                 => prometheus_hostname,
-                         :prometheus_api_port                 => prometheus_api_port,
-                         :prometheus_security_protocol        => prometheus_security_protocol,
-                         :prometheus_tls_ca_certs             => prometheus_tls_ca_certs,
-                         :prometheus_auth_status              => prometheus_auth_status,
-                         :hawkular_api_port                   => hawkular_api_port,
+                         :metrics_selection                   => retrieve_metrics_selection,
+                         :metrics_selection_default           => @ems.emstype == 'kubernetes' ? 'disabled' : 'enabled',
+                         :metrics_hostname                    => metrics_hostname,
+                         :metrics_api_port                    => metrics_port,
+                         :metrics_tls_ca_certs                => metrics_tls_ca_certs,
+                         :metrics_security_protocol           => metrics_security_protocol,
                          :api_version                         => @ems.api_version ? @ems.api_version : "v2",
                          :default_security_protocol           => default_security_protocol,
-                         :hawkular_security_protocol          => hawkular_security_protocol,
                          :default_tls_ca_certs                => default_tls_ca_certs,
-                         :hawkular_tls_ca_certs               => hawkular_tls_ca_certs,
                          :provider_region                     => @ems.provider_region,
                          :default_userid                      => @ems.authentication_userid ? @ems.authentication_userid : "",
                          :service_account                     => service_account ? service_account : "",
                          :bearer_token_exists                 => @ems.authentication_token(:bearer).nil? ? false : true,
                          :ems_controller                      => controller_name,
                          :default_auth_status                 => default_auth_status,
-                         :hawkular_auth_status                => hawkular_auth_status,
                          :prometheus_alerts_api_port          => prometheus_alerts_api_port,
                          :prometheus_alerts_hostname          => prometheus_alerts_hostname,
                          :prometheus_alerts_security_protocol => prometheus_alerts_security_protocol,
@@ -401,20 +389,14 @@ module Mixins
       metrics_hostname = params[:metrics_hostname].strip if params[:metrics_hostname]
       metrics_port = params[:metrics_api_port].strip if params[:metrics_api_port]
       metrics_database_name = params[:metrics_database_name].strip if params[:metrics_database_name]
-      hawkular_hostname = params[:hawkular_hostname].strip if params[:hawkular_hostname]
-      prometheus_hostname = params[:prometheus_hostname].strip if params[:prometheus_hostname]
-      prometheus_api_port = params[:prometheus_api_port].strip if params[:prometheus_api_port]
-      prometheus_security_protocol = params[:prometheus_security_protocol].strip if params[:prometheus_security_protocol]
-      hawkular_api_port = params[:hawkular_api_port].strip if params[:hawkular_api_port]
-      hawkular_security_protocol = params[:hawkular_security_protocol].strip if params[:hawkular_security_protocol]
+      metrics_security_protocol = params[:metrics_security_protocol].strip if params[:metrics_security_protocol]
+      metrics_tls_ca_certs = params[:metrics_tls_ca_certs].strip if params[:metrics_tls_ca_certs]
       default_tls_ca_certs  = params[:default_tls_ca_certs].strip if params[:default_tls_ca_certs]
-      hawkular_tls_ca_certs = params[:hawkular_tls_ca_certs].strip if params[:hawkular_tls_ca_certs]
       prometheus_alerts_tls_ca_certs = params[:prometheus_alerts_tls_ca_certs].strip if params[:prometheus_alerts_tls_ca_certs]
       prometheus_alerts_hostname = params[:prometheus_alerts_hostname].strip if params[:prometheus_alerts_hostname]
       prometheus_alerts_api_port = params[:prometheus_alerts_api_port].strip if params[:prometheus_alerts_api_port]
       prometheus_alerts_security_protocol = params[:prometheus_alerts_security_protocol].strip if params[:prometheus_alerts_security_protocol]
-      prometheus_tls_ca_certs = params[:hawkular_tls_ca_certs].strip if params[:hawkular_tls_ca_certs]
-      prometheus_tls_ca_certs = params[:prometheus_tls_ca_certs].strip if params[:prometheus_tls_ca_certs]
+
       default_endpoint = {}
       amqp_endpoint = {}
       ceilometer_endpoint = {}
@@ -483,15 +465,15 @@ module Mixins
         default_endpoint = {:role => :default, :hostname => hostname, :port => port}
         default_endpoint.merge!(endpoint_security_options(ems.security_protocol, default_tls_ca_certs))
         if params[:metrics_selection] == 'hawkular'
-          if hawkular_hostname.blank?
+          if metrics_hostname.blank?
             default_key = params[:default_password] || ems.authentication_key
-            hawkular_hostname = get_hostname_from_routes(ems, default_endpoint, default_key)
+            metrics_hostname = get_hostname_from_routes(ems, default_endpoint, default_key)
           end
-          hawkular_endpoint = {:role => :hawkular, :hostname => hawkular_hostname, :port => hawkular_api_port}
-          hawkular_endpoint.merge!(endpoint_security_options(hawkular_security_protocol, hawkular_tls_ca_certs))
+          hawkular_endpoint = {:role => :hawkular, :hostname => metrics_hostname, :port => metrics_port}
+          hawkular_endpoint.merge!(endpoint_security_options(metrics_security_protocol, metrics_tls_ca_certs))
         elsif params[:metrics_selection] == 'prometheus'
-          prometheus_endpoint = {:role => :prometheus, :hostname => prometheus_hostname, :port => prometheus_api_port}
-          prometheus_endpoint.merge!(endpoint_security_options(prometheus_security_protocol, prometheus_tls_ca_certs))
+          prometheus_endpoint = {:role => :prometheus, :hostname => metrics_hostname, :port => metrics_port}
+          prometheus_endpoint.merge!(endpoint_security_options(metrics_security_protocol, metrics_tls_ca_certs))
         end
         if params[:alerts_selection] == 'prometheus'
           prometheus_alerts_endpoint = {:role => :prometheus_alerts, :hostname => prometheus_alerts_hostname, :port => prometheus_alerts_api_port}

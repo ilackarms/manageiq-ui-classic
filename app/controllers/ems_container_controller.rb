@@ -93,11 +93,11 @@ class EmsContainerController < ApplicationController
 
   def retrieve_metrics_selection
     if @ems.connection_configurations.try(:prometheus)
-      return "prometheus"
+      "prometheus"
     elsif @ems.connection_configurations.try(:hawkular)
-      return "hawkular"
+      "hawkular"
     else
-      return "disabled"
+      "disabled"
     end
   end
 

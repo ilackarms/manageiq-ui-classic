@@ -48,6 +48,7 @@
         = select_tag('metrics_selection', options_for_select([[_("Disabled"), "disabled"], [_("Hawkular"), "hawkular"],
                      [_("Prometheus"), "prometheus"]]),
                      "ng-model"                    => "emsCommonModel.metrics_selection",
+                     "ng-change"                   => "metricSelectionChanged()",
                      "checkchange"                 => "",
                      "required"                    => "",
                      "selectpicker-for-select-tag" => "")
