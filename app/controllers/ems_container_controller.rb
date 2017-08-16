@@ -92,9 +92,12 @@ class EmsContainerController < ApplicationController
   end
 
   def retrieve_metrics_selection
-    endpoint_role = @ems.endpoints.where.not(:role => 'default').pluck(:role)
-    unless endpoint_role.nil?
-      endpoint_role.first
+    if @ems.connection_configurations.try(:prometheus)
+      return "prometheus"
+    elsif @ems.connection_configurations.try(:hawkular)
+      return "hawkular"
+    else
+      return "disabled"
     end
   end
 
